@@ -1,5 +1,5 @@
 - name: install of tomcat
-  hosts: all
+  hosts: node-1 
   becomes: yes
   tasks:
     - name: install java 11
