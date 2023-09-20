@@ -1,6 +1,6 @@
 - name: install of tomcat
   hosts: node-1 
-  becomes: yes
+  # becomes: yes
   tasks:
     - name: install java 11
       ansible.builtin.apt:
