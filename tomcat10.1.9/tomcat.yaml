@@ -39,7 +39,7 @@
     - name: copy tomcatservice file
       ansible.builtin.copy:
         remote_src: false
-        src: /tomcat.service
+        src: tomcat.service
         dest: /etc/systemd/system/tomcat.service
         notify:
           - restart tomcat service
