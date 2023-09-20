@@ -1,6 +1,6 @@
 [Unit]
 Description=Tomcat 10 servlet container
-After=network.target
+After=network.target  multi-user.target
 
 [Service]
 Type=forking
