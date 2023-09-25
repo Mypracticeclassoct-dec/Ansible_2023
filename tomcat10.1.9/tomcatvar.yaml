@@ -1,0 +1,56 @@
+- name: install of tomcat
+  hosts: node-1 
+  become: yes
+  vars:
+    java_version: openjdk-11-jdk
+    user_name: tomcat 
+    tomcat_home: /opt/tomcat 
+    tomcat_version: 10.1.9
+  tasks:
+    - name: install java 11
+      ansible.builtin.apt:
+        name:  {{ java_version }} 
+        state: present
+        update_cache: true
+    - name: creating group 
+      ansible.builtin.group:
+        name : {{ user_name }}
+        state: present 
+    - name: creating tomcat user
+      ansible.builtin.user:
+        name: {{ user_name }}
+        create_home: true
+        home: {{ tomcat_home}}
+        group: {{ user_name }}
+        shell: /bin/false
+        state: present
+    - name: download tomcat to tmp directory
+      ansible.builtin.get_url:
+        url: "https://archive.apache.org/dist/tomcat/tomcat-10/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz"
+        dest: /tmp/
+    - name: unarchive tomcat file
+      ansible.builtin.unarchive:
+        src: /tmp/apache-tomcat-{{ tomcat_version }}.tar.gz
+        dest: {{ tomcat_home }}
+        remote_src: true
+    - name: symboic link
+      ansible.builtin.file:
+        src: " {{ tomcat_home }}/apache-tomcat-{{ tomcat_version }} "
+        dest: " {{ tomcat_home }}/latest " 
+        state: link
+    - name: execute sh files in bin directory
+      ansible.builtin.command:
+        cmd: sudo sh -c 'chmod +x /opt/tomcat/latest/bin/*.sh'
+    - name: copy tomcatservice file
+      ansible.builtin.copy:
+        remote_src: false
+        src: tomcat.service
+        dest: /etc/systemd/system/tomcat.service
+        notify:
+          - restart tomcat service
+  handlers:
+    - name: restart tomcat service
+      ansible.builtin.service:
+        name: {{ user_name }}
+        enabled: true
+        state: restarted
