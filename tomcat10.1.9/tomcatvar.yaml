@@ -9,19 +9,19 @@
   tasks:
     - name: install java 11
       ansible.builtin.apt:
-        name:  {{ java_version }} 
+        name:  "{{ java_version }}"
         state: present
         update_cache: true
     - name: creating group 
       ansible.builtin.group:
-        name : {{ user_name }}
+        name : "{{ user_name }}"
         state: present 
     - name: creating tomcat user
       ansible.builtin.user:
-        name: {{ user_name }}
+        name: "{{ user_name }}"
         create_home: true
-        home: {{ tomcat_home}}
-        group: {{ user_name }}
+        home: "{{ tomcat_home}}"
+        group: "{{ user_name }}"
         shell: /bin/false
         state: present
     - name: download tomcat to tmp directory
@@ -31,7 +31,7 @@
     - name: unarchive tomcat file
       ansible.builtin.unarchive:
         src: /tmp/apache-tomcat-{{ tomcat_version }}.tar.gz
-        dest: {{ tomcat_home }}
+        dest: "{{ tomcat_home }}"
         remote_src: true
     - name: symboic link
       ansible.builtin.file:
@@ -51,6 +51,6 @@
   handlers:
     - name: restart tomcat service
       ansible.builtin.service:
-        name: {{ user_name }}
+        name: "{{ user_name }}"
         enabled: true
         state: restarted
